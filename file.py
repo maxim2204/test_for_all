@@ -1,0 +1,87 @@
+import sys
+import os
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QCheckBox, QSpinBox
+from PyQt5.QtGui import QIcon
+import xml.etree.ElementTree as ET
+import random
+import numpy
+from fpdf import FPDF
+import cgi
+
+class File(QWidget):
+
+    def __init__(self, name):
+        super().__init__()
+        self.name = name
+        self.initUI()
+
+
+    def initUI(self):
+
+        self.setGeometry(300, 300, 300, 220)
+        print(self.name)
+        self.setWindowTitle(self.name[1:])
+        self.vbox = QVBoxLayout()
+
+
+        self.files = os.listdir(self.name)
+        print(self.files)
+
+        self.check = []
+        for i in self.files:
+            print(i)
+            self.nazv = i.split('.')[0]
+            self.nazv = QCheckBox(self.nazv)
+            self.vbox.addWidget(self.nazv)
+            self.check.append(self.nazv)
+
+
+        self.spin = QSpinBox()
+        self.spin.setValue(1)
+        self.but_inf_open = QPushButton('Открыть')
+        self.but_inf_open.clicked.connect(self.push)
+        self.vbox.addWidget(self.spin)
+        self.vbox.addWidget(self.but_inf_open)
+
+        self.setLayout(self.vbox)
+        self.show()
+
+    def push(self):
+        self.checkis = []
+        for i in self.check:
+            if i.isChecked():
+                self.checkis.append(i.text())
+        print(self.checkis)
+        self.parse()
+
+    def parse(self):
+        self.all = []
+        if self.checkis != []:
+            path = self.name + '/' + self.checkis[0] + '.xml'
+            print(path)
+            root = ET.parse(path).getroot()
+    
+            for type_tag in root.findall('qwe'):
+                value = type_tag.get('text')
+                self.all.append(value)
+
+            print(self.all)
+            x = numpy.random.choice(self.all, size=self.spin.value(), replace=False)
+            self.pdf()
+
+
+
+    def pdf(self):
+        test = ''
+        for i in range(self.spin.value()):
+            test += '<p> {} </p>'.format(self.all[i])
+
+        f = open('final.html', 'w')
+        f.write('<!DOCTYPE html> <html> <head> <meta charset = "windows-1251"> <title> {} </title> </head> <body> <h1> Удачного теста </h1> {} </body> </html>'.format(self.name, test))
+
+
+if __name__ == '__main__':
+
+    app = QApplication(sys.argv)
+    ex = File('$математика')
+    sys.exit(app.exec_())

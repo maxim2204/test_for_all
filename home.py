@@ -1,11 +1,8 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton
 from PyQt5.QtGui import QIcon
-from fiz.fiz import Fiz
-from mat.mat import Mat
-from rus.rus import Rus
-from inf.inf import Inf
-
+import os
+from file import File
 
 class Example(QWidget):
 
@@ -17,36 +14,30 @@ class Example(QWidget):
 
     def initUI(self):
 
-        self.setGeometry(300, 300, 300, 220)
+        self.setGeometry(150, 150, 300, 220)
         self.setWindowTitle('Tests')
-        self.setWindowIcon(QIcon('web.png'))
+        self.file()
         self.vbox = QVBoxLayout()
-        self.but_fiz = QPushButton('Физика')
-        self.but_mat = QPushButton('Математика')
-        self.but_rus = QPushButton('Русский')
-        self.but_inf = QPushButton('Информатика')
-        self.vbox.addWidget(self.but_fiz)
-        self.vbox.addWidget(self.but_mat)
-        self.vbox.addWidget(self.but_rus)
-        self.vbox.addWidget(self.but_inf)
-        self.but_fiz.clicked.connect(self.pushfiz)
-        self.but_mat.clicked.connect(self.pushmat)
-        self.but_rus.clicked.connect(self.pushrus)
-        self.but_inf.clicked.connect(self.pushinf)
+        for i in self.files:
+            self.i = QPushButton(i)
+            self.vbox.addWidget(self.i)
+            self.i.clicked.connect(self.push)
         self.setLayout(self.vbox)
         self.show()
 
-    def pushfiz(self):
-        self.fiz = Fiz()
+    def file(self):
+        files = os.listdir()
+        self.files = [i for i in files if i[0] == '$']
+        print(files)
 
-    def pushmat(self):
-        self.mat = Mat()
-
-    def pushrus(self):
-        self.rus = Rus()
-
-    def pushinf(self):
-        self.inf = Inf()
+    def push(self):
+        name = self.sender().text()
+        self.test = File(str(name))
+        """print(self.sender().text())
+        self.diri = os.listdir(self.sender().text())
+        print(self.diri[0])
+        catal = self.sender().text() + "." + self.diri[0]
+        print(catal)"""
 
 if __name__ == '__main__':
 
