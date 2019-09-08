@@ -1,6 +1,6 @@
 import sys
 import os
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QCheckBox, QSpinBox
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QCheckBox, QSpinBox, QMessageBox
 from PyQt5.QtGui import QIcon
 import xml.etree.ElementTree as ET
 import random
@@ -57,24 +57,31 @@ class File(QWidget):
     def parse(self):
         self.all = []
         if self.checkis != []:
-            path = self.name + '/' + self.checkis[0] + '.xml'
-            print(path)
-            root = ET.parse(path).getroot()
-    
-            for type_tag in root.findall('qwe'):
-                value = type_tag.get('text')
-                self.all.append(value)
+            for i in self.checkis:
+                path = self.name + '/' + i + '.xml'
+                print(path)
+                root = ET.parse(path).getroot()
+
+                for type_tag in root.findall('qwe'):
+                    value = type_tag.get('text')
+                    self.all.append(value)
 
             print(self.all)
-            x = numpy.random.choice(self.all, size=self.spin.value(), replace=False)
-            self.pdf()
+            if len(self.all) >= self.spin.value():
+                self.x = numpy.random.choice(self.all, size=self.spin.value(), replace=False)
+                self.pdf()
+                print(self.x)
+            else:
+                buttonReply = QMessageBox.question(self, '', "Всего {} вопросов".format(len(self.all)))
+        else:
+            buttonReply = QMessageBox.question(self, '', "Выбранно 0 тем")
 
 
 
     def pdf(self):
         test = ''
         for i in range(self.spin.value()):
-            test += '<p> {} </p>'.format(self.all[i])
+            test += '<p>{})  {} </p>'.format(i+1,self.x[i])
 
         f = open('final.html', 'w')
         f.write('<!DOCTYPE html> <html> <head> <meta charset = "windows-1251"> <title> {} </title> </head> <body> <h1> Удачного теста </h1> {} </body> </html>'.format(self.name, test))
