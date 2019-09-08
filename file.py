@@ -85,6 +85,10 @@ class File(QWidget):
 
         f = open('final.html', 'w')
         f.write('<!DOCTYPE html> <html> <head> <meta charset = "windows-1251"> <title> {} </title> </head> <body> <h1> Удачного теста </h1> {} </body> </html>'.format(self.name, test))
+        f.close()
+        n = os.path.join(os.getcwd())
+        print(n)
+        os.system(r'{}\final.html'.format(n))
 
 
 if __name__ == '__main__':
