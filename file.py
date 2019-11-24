@@ -60,7 +60,13 @@ class File(QWidget):
             for i in self.checkis:
                 path = self.name + '/' + i + '.xml'
                 print(path)
-                root = ET.parse(path).getroot()
+                try:
+                    root = ET.parse(path).getroot()
+                except:
+                    buttonReply = QMessageBox.question(self, '', "xml с ошибками")
+                    exit(0)
+                    sys.exit
+                    os.abort()
 
                 for type_tag in root.findall('qwe'):
                     value = type_tag.get('text')
@@ -94,5 +100,5 @@ class File(QWidget):
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
-    ex = File('$математика')
+    ex = File('$физика')
     sys.exit(app.exec_())
